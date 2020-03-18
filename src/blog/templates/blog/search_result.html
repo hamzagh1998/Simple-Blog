@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+
+<div class="container">
+  <div class="row">
+    <!-- user info -->
+    <div class="col-md-3">
+      {% if request.user.is_authenticated %}
+      <div class="card" style="margin-top:8px;">
+        <div class="card-body">
+          <div align="center">
+            <img class="rounded-circle" src="{{ user.profile.user_pics.url }}" width="150px">
+            <h3 align="center" class="card-title"><a href="{% url 'users:profile' %}">{{ user.username }}</a></h3>
+            <p align="center" >{{ user.email }}</p>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+    <!-- content -->
+    <div class="col-md-6">
+      {% if post %}
+        {% for p in post.all %}
+          <div class="card mt-2">
+            <div class="card-body">
+              <img class="rounded-circle" src="{{ p.author.profile.user_pics.url }}" width="40px">
+              <a class="mr-2" href="{% url 'blog:user-posts' p.author.username %}">{{ p.author }}</a>
+              <small class="text-muted">{{ p.date_posted|date:"F d, Y" }}</small>
+              <h2 class="card-title"><a href="{% url 'blog:post-detail' p.pk %}" target="_blank">{{ p.title }}</a></h2>
+              <p class="card-text">{{ p.body }}</p>
+              {% if p.post_pic.url is not null  %}
+                <img class="card-img-top" src="{{ p.post_pic.url }}" alt="post pictures">
+              {% endif %}
+              {% if request.user.is_authenticated %}
+                {% if user == p.author %}
+                  <a class="btn btn-warning mt-1" style="color:#fff" href="{% url 'blog:post-update' p.pk %}">Update</a>
+                  <a class="btn btn-danger mt-1" style="color:#fff" href="{% url 'blog:post-delete' p.pk %}">Delete</a>
+                {% endif %}
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+        {% if is_paginated %}
+          {% if page_obj.has_previous %}
+            <a class="btn btn-outline-info btn-4 mb-4" href="?page=1&q={{ query }}">First</a>
+            <a class="btn btn-outline-info btn-4 mb-4" href="?page={{ page_obj.previous_page_number }}&q={{ query }}">Previous</a>
+          {% endif %}
+
+          {% for page_num in page_obj.paginator.page_range %}
+            {% if page_num == page_obj.number %}
+              <a class="btn btn-info btn-4 mb-4" href="?page={{ page_num }}&q={{ query }}">{{ page_num }}</a>
+            {% elif page_num > page_obj.number|add:'-3' and page_num < page_obj.number|add:'3' %}
+              <a class="btn btn-outline-info btn-4 mb-4" href="?page={{ page_num }}&q={{ query }}">{{ page_num }}</a>
+            {% endif %}
+          {% endfor %}
+
+          {% if page_obj.has_next %}
+            <a class="btn btn-outline-info btn-4 mb-4" href="?page={{ page_obj.next_page_number }}&q={{ query }}">Next</a>
+            <a class="btn btn-outline-info btn-4 mb-4" href="?page={{ page_obj.paginator.num_pages }}&q={{ query }}">Last</a>
+          {% endif %}
+
+        {% endif %}
+
+      {% else %}
+        <h2>There is no results for <font color="gray">'{{query}}'</font></h2>
+      {% endif %}
+    </div>
+    <div class="col-md-3">
+      <div class="card mt-2">
+        <div class="card-body">
+          {% load static %}
+          <img class="card-img-top rounded-circle" src="{% static 'main/img/brand.jpg' %}" alt="blog logo" width="50px">
+          <p align="center">Hello, There if you are authenticated, Then you can click the button bellow and create a new Blog Post!<br>If You are not authenticated than Sign In or go to the registration page and Sign Up</p>
+          <p align="center"><a class="btn btn-primary" href="{% url 'blog:post-create' %}">Create New Post</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

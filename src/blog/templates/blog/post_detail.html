@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<div class="container">
+  <div class="row">
+    <!-- user info -->
+    <div class="col-md-3">
+      {% if request.user.is_authenticated %}
+      <div class="card mt-2">
+        <div class="card-body">
+          <div align="center">
+            <img class="rounded-circle" src="{{ user.profile.user_pics.url }}" width="150px">
+            <h3 align="center" class="card-title"><a href="{% url 'users:profile' %}">{{ user.username }}</a></h3>
+            <p class="ml-4">{{ user.email }}</p>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+    <!-- content -->
+    <div class="col-md-7">
+      {% if post %}
+        <div class="card mt-2">
+          <div class="card-body">
+            <img class="rounded-circle" src="{{ object.author.profile.user_pics.url }}" width="50px">
+            <a class="mr-2" href="{% url 'blog:user-posts' object.author.username %}">{{ object.author }}</a>
+            <small class="text-muted">{{ object.date_posted|date:"F d, Y" }}</small>
+            <h2 class="card-title">{{ object.title }}</h2>
+            <p class="card-text">{{ object.body }}</p>
+            {% if post.post_pic.url is not null  %}
+              <img class="card-img-top" src="{{ post.post_pic.url }}" alt="post pictures">
+            {% endif %}
+            {% if object.author == user %}
+              <a class="btn btn-warning mt-1" style="color:#fff" href="{% url 'blog:post-update' object.pk %}">Update</a>
+              <a class="btn btn-danger mt-1" style="color:#fff" href="{% url 'blog:post-delete' object.pk %}">Delete</a>
+            {% endif %}
+          </div>
+          {% else %}
+            <h2>There is no post in this moment!</h2>
+          {% endif %}
+        </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

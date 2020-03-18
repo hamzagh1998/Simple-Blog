@@ -1,0 +1,42 @@
+{% load static %}
+<!-- Navigation bar -->
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <a class="navbar-brand" href="{% url 'home' %}">Simple Blog</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="https://github.com/hamzagh1998/Simple-Blog" target="_blank">GitHub<span class="sr-only">(current)</span></a>
+      </li>
+      {% if request.user.is_authenticated %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ user.username }}</a>
+          <div class="dropdown-menu" aria-labelledby="dropdown01">
+            {% if user.is_superuser or user.is_admin %}
+              <a class="dropdown-item" href="{% url 'admin:index' %}">Administration Page</a>
+            {% endif %}
+            <a class="dropdown-item" href="{% url 'blog:post-create' %}">Create New Post</a>
+            <a class="dropdown-item" href="{% url 'users:profile' %}">My Account</a>
+            <a class="dropdown-item" href="{% url 'users:logout' %}">Log Out</a>
+          </div>
+        </li>
+      {% endif %}
+    </ul>
+    <form class="form-inline my-2 my-lg-0" action="{% url 'blog:search-results' %}" method="GET">
+      <input name="q" class="form-control mr-sm-2" id="id_q" type="text" placeholder="Search" aria-label="Search">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+      <ul class="navbar-nav mr-auto">
+        {% if not request.user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link log" href="{% url 'users:login' %}">Log In</a>
+          </li>
+          <li class="nav-item">
+            <a class="btn btn-outline-secondary nav-link reg" href="{% url 'users:register' %}">Registration</a>
+          </li>
+        {% endif %}
+      </ul>
+    </form>
+  </div>
+</nav>

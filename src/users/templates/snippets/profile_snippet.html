@@ -1,0 +1,12 @@
+{% if posts_list %}
+  <h2>Yor Blog Posts:</h2>
+  {% for post in posts_list.all %}
+    {% if post.author == request.user %}
+    <ul>
+      <li><h3><a href="{% url 'blog:post-detail' post.pk %}">{{ post.title }}</a></h3></li>
+    </ul>
+    {% endif %}
+  {% endfor %}
+{% else %}
+  <p align="center">You Dont't have any Blog Post</p>
+{% endif %}

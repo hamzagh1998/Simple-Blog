@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-8 offset-2">
+      <div class="card">
+        <div class="card-body">
+          {% if request.user.is_authenticated %}
+            <form method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+              <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Blog Post</legend>
+                {{form|crispy}}
+                <input type="submit" class="btn btn-success btn-lg" value="Post">
+                <a class="btn btn-secondary btn-lg" href="{% url 'home' %}">Return</a>
+              </fieldset>
+            </form>
+          {% else %}
+            <p align="center">You are not allowed to see this page!<br><a href="{% url 'users:login' %}">Sign In</a> or <a href="{% url 'users:register' %}">Sign Up</a></p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
